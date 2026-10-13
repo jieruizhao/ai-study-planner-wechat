@@ -1,0 +1,110 @@
+<view class="page {{theme === 'dark' ? 'td' : ''}}" style="padding-top: {{statusBarH}}px">
+  <view class="eyebrow">REFLECTION</view>
+  <view class="h-page">学习复盘</view>
+
+  <view class="seg">
+    <view class="seg-i {{range === 'week' ? 'on' : ''}}" data-r="week" bindtap="switchRange">最近7天</view>
+    <view class="seg-i {{range === 'month' ? 'on' : ''}}" data-r="month" bindtap="switchRange">最近30天</view>
+    <view class="seg-i {{range === 'custom' ? 'on' : ''}}" data-r="custom" bindtap="switchRange">自定义</view>
+  </view>
+  <view wx:if="{{range === 'custom'}}" class="date-filters">
+    <picker mode="date" value="{{from}}" end="{{to}}" data-field="from" bindchange="dateChanged" disabled="{{analyzing || planBusy}}"><view class="filter-chip">开始 {{from}} ▾</view></picker>
+    <picker mode="date" value="{{to}}" start="{{from}}" end="{{today}}" data-field="to" bindchange="dateChanged" disabled="{{analyzing || planBusy}}"><view class="filter-chip">结束 {{to}} ▾</view></picker>
+  </view>
+  <view wx:if="{{rangeError}}" class="coach-error">{{rangeError}}</view>
+
+  <view class="range-row">
+    <text class="serif range-date">{{fromTo}}</text>
+    <text class="muted">{{ongoing ? '进行中' : '已结束'}}</text>
+  </view>
+
+  <view class="card">
+    <view class="muted">{{rangeLabel}}已经留下</view>
+    <view class="stat-line"><text class="num-xl">{{summary ? summary.activeDays : days}}</text><text class="stat-unit">个学习日</text></view>
+    <view class="muted" style="margin-top: 18rpx">共专注 {{summary ? summary.totalMinutes + '分钟' : minutesText}}</view>
+    <view class="track" style="margin-top: 26rpx"><view class="fill" style="width: {{progressPct}}%"></view></view>
+    <view class="muted" style="margin-top: 14rpx">{{progressNote}}</view>
+  </view>
+
+  <view wx:if="{{summary}}" class="card">
+    <view class="cell"><text>任务完成率</text><text>{{summary.completionRate}}% · {{summary.doneTasks}}/{{summary.taskCount}}</text></view>
+    <view class="cell"><text>习惯完成率</text><text>{{summary.habitRate}}% · {{summary.habitDone}}/{{summary.habitExpected}}</text></view>
+    <view class="muted">习惯完成率仅统计当前启用的习惯，按当前配置估算；历史打卡保留。</view>
+    <view wx:for="{{subjectStats}}" wx:key="label" class="cell"><text>{{item.label}}</text><text>{{item.minutes}} 分钟</text></view>
+  </view>
+  <view class="sec-head"><text class="sec-title">学习节奏</text></view>
+  <view class="card">
+    <view class="rhythm-week" wx:if="{{range === 'week'}}">
+      <view wx:for="{{rhythm}}" wx:key="date" class="dot-cell">
+        <text class="dot-lab">{{item.lab}}</text>
+        <view class="dot {{item.cls}}">{{item.sym}}</view>
+      </view>
+    </view>
+    <view class="rhythm-month" wx:else>
+      <view wx:for="{{rhythm}}" wx:key="date" class="dot-cell m {{item.future ? 'dim' : ''}}">
+        <view class="dot sm {{item.cls}}">{{item.sym}}</view>
+        <text class="dot-lab">{{item.day}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="sec-head"><text class="sec-title">真实记录</text></view>
+  <view class="card">
+    <view class="cell"><text class="muted kv">主要内容</text><text class="kv-v">{{mainText}}</text></view>
+    <view class="cell"><text class="muted kv">记录次数</text><text class="kv-v">{{logCount}} 次</text></view>
+    <view class="cell"><text class="muted kv">习惯完成</text><text class="kv-v">{{habitText}}</text></view>
+  </view>
+
+  <view class="foot-note">仅根据你已保存的记录汇总，不进行能力评分。</view>
+  <view class="sec-head"><text class="sec-title">AI 学习导师</text></view>
+  <view class="card coach-form">
+    <view class="muted">根据所选日期内的真实记录分析，并规划接下来的学习。</view>
+    <view class="field-label">学习目标</view>
+    <textarea class="coach-input coach-goal" maxlength="300" value="{{goal}}" data-field="goal" bindinput="setting" disabled="{{analyzing || planBusy}}" placeholder="例如：两周内改善阅读定位，养成每日复习习惯" />
+    <view class="field-label">建议计划开始日</view>
+    <picker mode="date" value="{{planStart}}" start="{{today}}" data-field="planStart" bindchange="setting" disabled="{{analyzing || planBusy}}"><view class="coach-input">{{planStart}} ▾</view></picker>
+    <view class="coach-columns">
+      <view><view class="field-label">计划天数（1–14）</view><input class="coach-input" type="number" value="{{planDaysInput}}" data-field="planDaysInput" bindinput="setting" disabled="{{analyzing || planBusy}}" /></view>
+      <view><view class="field-label">每日可用分钟</view><input class="coach-input" type="number" value="{{dailyMinutes}}" data-field="dailyMinutes" bindinput="setting" disabled="{{analyzing || planBusy}}" /></view>
+    </view>
+    <view class="field-label">可学习日</view>
+    <checkbox-group class="weekday-checks" bindchange="weekdaysChanged"><label wx:for="{{[1,2,3,4,5,6,7]}}" wx:key="*this"><checkbox value="{{item}}" checked="true" disabled="{{analyzing || planBusy}}" />{{item === 7 ? '日' : item}}</label></checkbox-group>
+    <view class="cell"><text class="muted">同意将所选学习记录发送给AI服务分析（不发送头像、昵称或账号标识）</text><switch checked="{{consent}}" bindchange="consentChanged" disabled="{{analyzing || planBusy}}" color="#55654B" /></view>
+    <button class="btn" bindtap="analyze" loading="{{analyzing}}" disabled="{{analyzing || planBusy}}">{{analyzing ? '正在分析，请稍候' : '分析并生成建议'}}</button>
+  </view>
+  <view wx:if="{{coachError}}" class="coach-error">{{coachError}}</view>
+  <view wx:if="{{report}}" class="card coach-result">
+    <view class="sec-title">分析与建议</view>
+    <view class="muted">{{report.from}} — {{report.to}} · 使用 {{report.recordsIncluded}}/{{report.totalRecords}} 条记录</view>
+    <view class="muted">本次建议每日预算 {{report.settings.dailyMinutes}} 分钟（包含原有任务）；调整上方设置后需重新生成建议。</view>
+    <view wx:if="{{report.omittedTextCharacters}}" class="muted">长文本已截取，分析并非覆盖所有备注。</view>
+    <view class="field-label">做得好的地方</view><text class="coach-text" selectable>{{report.strengths}}</text>
+    <view class="field-label">主要困难</view><text class="coach-text" selectable>{{report.difficulties}}</text>
+    <view class="field-label">下一步调整</view><text class="coach-text" selectable>{{report.suggestions}}</text>
+    <view class="field-label">任务预览 · 可修改或移除</view>
+    <view wx:for="{{tasks}}" wx:key="index" class="suggestion">
+      <picker mode="date" value="{{item.date}}" start="{{today}}" data-index="{{index}}" data-field="date" bindchange="editTask" disabled="{{planBusy}}"><view class="coach-input">{{item.date}} ▾</view></picker>
+      <input class="coach-input" value="{{item.subject}}" maxlength="20" data-index="{{index}}" data-field="subject" bindinput="editTask" disabled="{{planBusy}}" placeholder="科目" />
+      <input class="coach-input" value="{{item.content}}" maxlength="60" data-index="{{index}}" data-field="content" bindinput="editTask" disabled="{{planBusy}}" placeholder="任务名称" />
+      <view class="coach-columns"><input class="coach-input" type="number" value="{{item.minutes}}" data-index="{{index}}" data-field="minutes" bindinput="editTask" disabled="{{planBusy}}" /><view class="muted">分钟</view><button class="small-remove" data-kind="tasks" data-index="{{index}}" bindtap="removeSuggestion" disabled="{{planBusy}}">移除</button></view>
+      <text class="muted coach-text">{{item.reason}}</text>
+    </view>
+    <view class="field-label">习惯建议 · 导入后为持续习惯</view>
+    <view wx:for="{{habits}}" wx:key="index" class="suggestion"><input class="coach-input" value="{{item.name}}" maxlength="20" data-index="{{index}}" bindinput="editHabit" disabled="{{planBusy}}" /><view class="muted">星期（周一1至周日7，用逗号分隔）</view><input class="coach-input" value="{{item.weekdays}}" maxlength="30" data-index="{{index}}" bindblur="editHabitDays" disabled="{{planBusy}}" /><text class="muted coach-text">{{item.reason}}</text><button class="small-remove" data-kind="habits" data-index="{{index}}" bindtap="removeSuggestion" disabled="{{planBusy}}">移除</button></view>
+    <button class="btn" bindtap="importSuggestions" disabled="{{planBusy || (!tasks.length && !habits.length)}}" loading="{{planBusy}}">确认导入当前建议</button>
+    <view wx:if="{{importError}}" class="coach-error">{{importError}}</view>
+  </view>
+  <view wx:if="{{reports.length || historyError}}" class="card"><view class="sec-title">分析历史</view><view wx:for="{{reports}}" wx:key="_id" class="cell history-row"><view class="history-open" data-id="{{item._id}}" bindtap="openReport"><text>{{item.from}} — {{item.to}}</text><text class="muted">查看 ›</text></view><button class="small-remove" data-id="{{item._id}}" catchtap="deleteReport" disabled="{{analyzing || planBusy}}">删除</button></view><view wx:if="{{historyError}}" class="coach-error">{{historyError}}</view></view>
+  <view wx:if="{{batches.length || batchError}}" class="card">
+    <view class="sec-title">计划导入历史</view>
+    <view wx:for="{{batches}}" wx:key="_id" class="batch-row">
+      <view class="batch-date">{{item.from}} — {{item.to}}</view>
+      <view class="batch-meta"><text class="muted">{{item.tasks.length}} 条任务 · {{item.habits.length}} 个习惯</text><text class="batch-status {{item.status === 'undone' ? 'batch-status-undone' : ''}}">{{item.status === 'undone' ? '已撤销' : '已导入'}}</text></view>
+      <view class="batch-actions">
+        <button wx:if="{{item.status === 'imported'}}" class="batch-action" data-id="{{item._id}}" bindtap="undoBatch" disabled="{{analyzing || planBusy}}">撤销本次</button>
+        <button class="batch-action batch-delete" data-id="{{item._id}}" bindtap="deleteBatch" disabled="{{analyzing || planBusy}}">删除历史</button>
+      </view>
+    </view>
+    <view wx:if="{{batchError}}" class="coach-error">{{batchError}}</view>
+  </view>
+</view>

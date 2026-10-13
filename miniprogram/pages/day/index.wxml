@@ -1,0 +1,91 @@
+<view class="page {{theme === 'dark' ? 'td' : ''}}" style="padding-top: {{statusBarH}}px">
+  <!-- 顶部：返回 + 日期 + 补记 -->
+  <view class="nav-row">
+    <view class="nav-back" bindtap="back">‹</view>
+    <view class="nav-center">
+      <view class="muted" style="font-size: 22rpx; letter-spacing: 2rpx">{{topWeek}}</view>
+      <view class="serif" style="font-size: 44rpx; font-weight: 700; margin-top: 4rpx">{{topDate}}</view>
+    </view>
+    <view wx:if="{{!isFuture}}" class="nav-back" bindtap="goLog">✎</view>
+    <view wx:else class="nav-back" style="visibility:hidden">✎</view>
+  </view>
+
+  <!-- 原定计划 -->
+  <view class="sec-head">
+    <text class="sec-title">原定计划</text>
+    <view class="add-task-link" bindtap="openAddTask">＋ 新增任务</view>
+  </view>
+  <view class="card">
+    <view wx:if="{{!plan.length}}" class="empty-d" style="text-align:center">{{planEmpty}}</view>
+    <view wx:for="{{plan}}" wx:key="_id" class="cell" data-id="{{item._id}}" bindtap="openLog">
+      <view class="pill-plan">PLAN</view>
+      <view class="cell-main">
+        <view class="cell-title serif">{{item.title}}</view>
+        <view class="cell-desc">{{item.sub}}</view>
+      </view>
+      <view class="task-row-actions">
+        <view wx:if="{{item.status === 'done'}}" class="tag tag-brand">已完成</view>
+        <view wx:if="{{item.status !== 'done'}}" class="task-edit" data-id="{{item._id}}" catchtap="editTask">编辑</view>
+        <view class="task-delete" data-id="{{item._id}}" catchtap="removeTask">删除</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 实际学习 -->
+  <view wx:if="{{taskActionError}}" class="muted" style="color:var(--danger);padding:12rpx 0">{{taskActionError}}</view>
+  <view class="sec-head">
+    <text class="sec-title">实际学习</text>
+    <text class="muted">{{logCount ? logCount + ' 条 · 共 ' + totalMinutes + ' 分钟' : '尚未记录'}}</text>
+  </view>
+  <view class="card" wx:if="{{logCount}}">
+    <view wx:for="{{logs}}" wx:key="_id" class="cell">
+      <view class="log-min serif">{{item.durationMinutes}}<text class="muted" style="font-size:20rpx"> 分钟</text></view>
+      <view class="cell-main" style="margin-left: 24rpx">
+        <view class="cell-title" wx:if="{{item.content}}">{{item.content}}</view>
+        <view class="cell-desc" wx:if="{{item.note}}">{{item.note}}</view>
+        <view class="cell-desc" wx:if="{{item.nextTip}}">下一步：{{item.nextTip}}</view>
+      </view>
+      <view class="muted" style="color: var(--danger)" data-id="{{item._id}}" data-date="{{item.date}}" bindtap="removeLog">删除</view>
+    </view>
+  </view>
+  <view class="card empty-card" wx:else>
+    <view wx:if="{{isFuture}}" class="empty">
+      <view class="empty-t">还没有到这一天</view>
+      <view class="empty-d">完成后即可在这里留下记录</view>
+    </view>
+    <view wx:else class="empty">
+      <view class="empty-doodle">〰〰</view>
+      <view class="empty-t">这一天还没有学习记录</view>
+      <view class="empty-d">如果学过，可以补记实际时长和当时的感受。</view>
+      <view class="btn btn-ghost empty-btn" bindtap="goLog">＋ 补记学习</view>
+    </view>
+  </view>
+
+  <!-- 习惯记录 -->
+  <view class="sec-head"><text class="sec-title">习惯记录与提醒</text><view wx:if="{{isToday || isFuture}}" class="add-task-link" bindtap="addReminder">＋ 新增当日提醒</view></view>
+  <view class="card">
+    <view wx:if="{{!habitItems.length}}" class="empty-d" style="text-align:center; padding: 10rpx 0">当天没有需要打卡的习惯</view>
+    <view wx:for="{{habitItems}}" wx:key="_id" class="cell" data-id="{{item._id}}" bindtap="editReminder">
+      <view class="cell-main"><view class="cell-title">{{item.name}}</view><view class="cell-desc">{{item.time}} {{item.once ? '· 仅当天提醒' : ''}}</view></view>
+      <text class="muted">{{item.st === 'done' ? '已完成' : item.st === 'skipped' ? '已跳过' : '未记录'}}</text>
+    </view>
+  </view>
+  <view wx:if="{{addTaskShow}}" class="mask" bindtap="closeAddTask"></view>
+  <view wx:if="{{addTaskShow}}" class="sheet" catchtap="noop">
+    <view class="sheet-title">{{editingTaskId ? '编辑' : '新增'}} {{date}} 的任务</view>
+    <view class="field-label">科目</view>
+    <picker range="{{subjects}}" value="{{taskSubjectIndex}}" bindchange="onTaskSubject">
+      <view class="task-field">{{subjects[taskSubjectIndex]}} ›</view>
+    </picker>
+    <view class="field-label">任务名称</view>
+    <input class="task-field" value="{{taskContent}}" bindinput="onTaskContent" maxlength="60" placeholder="例如：完成阅读真题第一篇" />
+    <view class="field-label">建议时长（分钟）</view>
+    <input class="task-field" type="number" value="{{taskMinutes}}" bindinput="onTaskMinutes" />
+    <view class="muted" style="padding:16rpx 0">{{editingTaskId ? '仅修改这条任务，已有学习记录保留。' : '仅添加到所选日期，不修改每日任务模板。'}}</view>
+    <view wx:if="{{taskError}}" class="muted" style="color:var(--danger);padding:12rpx 0">{{taskError}}</view>
+    <view class="task-actions">
+      <button class="btn btn-ghost" bindtap="closeAddTask" disabled="{{taskSaving}}">取消</button>
+      <button class="btn" bindtap="saveTask" disabled="{{taskSaving}}" loading="{{taskSaving}}">保存任务</button>
+    </view>
+  </view>
+</view>

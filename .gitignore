@@ -1,0 +1,14 @@
+node_modules/
+test-results/
+project.private.config.json
+.env
+.env.*
+!.env.example
+*.log
+*.zip
+*.pem
+*.key
+*.p12
+*.pfx
+coverage/
+.DS_Store

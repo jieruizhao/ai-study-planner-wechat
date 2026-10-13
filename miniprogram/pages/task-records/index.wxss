@@ -1,0 +1,11 @@
+.records-nav, .record-link { display:flex; align-items:center; gap:20rpx; }
+.records-nav { margin-bottom:30rpx; }
+.records-back { font-size:44rpx; padding:12rpx 30rpx 12rpx 0; }
+.records-heading { font-size:34rpx; font-weight:700; }
+.records-title { font-size:30rpx; font-weight:700; word-break:break-all; }
+.records-sub { margin:16rpx 0 24rpx; }
+.record-main { flex:1; min-width:0; }
+.record-swipe { position:relative; overflow:hidden; border-radius:28rpx; margin-bottom:26rpx; }
+.record-swipe .record-link { position:relative; margin-bottom:0; transition:transform .2s; }
+.swipe-open { transform:translateX(-140rpx); }
+.record-delete { position:absolute; top:0; bottom:0; right:0; width:140rpx; display:flex; align-items:center; justify-content:center; background:#B95850; color:#fff; font-size:28rpx; }

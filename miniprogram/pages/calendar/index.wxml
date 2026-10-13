@@ -1,0 +1,74 @@
+<view class="page {{theme === 'dark' ? 'td' : ''}}" style="padding-top: {{statusBarH}}px">
+  <view class="eyebrow">STUDY ARCHIVE</view>
+  <view class="h-page">学习日历</view>
+  <view class="h-sub">按自己的节奏，留下真实记录</view>
+
+  <view class="card">
+    <view class="cal-head">
+      <view class="cal-nav" bindtap="prev">‹</view>
+      <view class="cal-ym serif">{{ymText}}</view>
+      <view class="cal-nav" bindtap="next">›</view>
+    </view>
+    <view class="cal-week">
+      <view wx:for="{{weekHeads}}" wx:key="*this" class="cal-wcell">{{item}}</view>
+    </view>
+    <view class="cal-grid">
+      <view wx:for="{{cells}}" wx:key="date"
+        class="cal-cell {{item.dim ? 'dim' : ''}}"
+        data-date="{{item.date}}" bindtap="tapDay">
+        <view class="cal-day serif {{item.isToday ? 'cal-ring' : ''}}">{{item.day}}</view>
+        <view wx:if="{{item.sym}}" class="cal-sym {{item.symCls}}">{{item.sym}}</view>
+      </view>
+    </view>
+    <view class="legend">
+      <text class="lg"><text class="sy-done">✓</text> 完成</text>
+      <text class="lg"><text class="sy-part">◐</text> 部分</text>
+      <text class="lg"><text class="sy-miss">·</text> 未记录</text>
+      <text class="lg"><text class="sy-rest">—</text> 休息</text>
+    </view>
+  </view>
+
+  <view wx:if="{{todayRow}}" class="today-details">
+    <view class="detail-heading">
+      <view class="detail-title">今天 · {{todayRow.week}}</view>
+      <view class="manage-link" bindtap="tapToday">管理当天 ›</view>
+    </view>
+    <view class="detail-heading">
+      <view class="detail-title">原定计划</view>
+      <view class="muted">已完成 {{todayDoneCount}} / {{todayTasks.length}}</view>
+    </view>
+    <view class="card">
+      <view wx:for="{{todayTasks}}" wx:key="_id" class="detail-row">
+        <view class="detail-main">
+          <view class="tr-title">{{item.title}}</view>
+          <view class="muted detail-sub">建议 {{item.suggestedMinutes}} 分钟</view>
+        </view>
+        <view class="task-status {{item.status === 'done' ? 'task-done' : ''}}">{{item.status === 'done' ? '已完成' : '未完成'}}</view>
+      </view>
+      <view wx:if="{{!todayTasks.length}}" class="empty-detail muted">{{todayRow.title}}</view>
+    </view>
+    <view class="detail-heading">
+      <view class="detail-title">实际学习</view>
+      <view class="muted">{{todayLogs.length}} 条 · 共 {{todayMinutes}} 分钟</view>
+    </view>
+    <view class="card">
+      <view wx:for="{{todayLogs}}" wx:key="_id" class="detail-row">
+        <view class="detail-main">
+          <view class="tr-title">{{item.content || item.subject || '学习记录'}}</view>
+          <view wx:if="{{item.note}}" class="muted detail-sub">{{item.note}}</view>
+          <view wx:if="{{item.nextTip}}" class="muted detail-sub">下次提醒：{{item.nextTip}}</view>
+        </view>
+        <view class="log-duration">{{item.durationMinutes}} 分钟</view>
+      </view>
+      <view wx:if="{{!todayLogs.length}}" class="empty-detail muted">今天尚未记录学习</view>
+    </view>
+    <view class="detail-heading"><view class="detail-title">习惯记录</view></view>
+    <view class="card">
+      <view wx:for="{{todayHabits}}" wx:key="_id" class="detail-row">
+        <view class="detail-main tr-title">{{item.name}}</view>
+        <view class="task-status {{item.st === 'done' ? 'task-done' : ''}}">{{item.statusText}}</view>
+      </view>
+      <view wx:if="{{!todayHabits.length}}" class="empty-detail muted">今天没有安排习惯</view>
+    </view>
+  </view>
+</view>

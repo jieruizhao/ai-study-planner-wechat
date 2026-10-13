@@ -1,0 +1,42 @@
+{
+  "pages": [
+    "pages/today/index",
+    "pages/calendar/index",
+    "pages/review/index",
+    "pages/profile/index",
+    "pages/day/index",
+    "pages/focus/index",
+    "pages/log-edit/index",
+    "pages/task-records/index",
+    "pages/habits/index",
+    "pages/habit-edit/index"
+  ],
+  "window": {
+    "navigationStyle": "custom",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "SEOUL STUDY CLUB",
+    "backgroundColor": "#F2F1EC",
+    "backgroundTextStyle": "dark"
+  },
+  "tabBar": {
+    "custom": false,
+    "color": "#8A9084",
+    "selectedColor": "#55654B",
+    "backgroundColor": "#F2F1EC",
+    "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/today/index", "text": "今日", "iconPath": "assets/icons/home.png", "selectedIconPath": "assets/icons/home-on.png" },
+      { "pagePath": "pages/calendar/index", "text": "日历", "iconPath": "assets/icons/calendar.png", "selectedIconPath": "assets/icons/calendar-on.png" },
+      { "pagePath": "pages/review/index", "text": "复盘", "iconPath": "assets/icons/chart.png", "selectedIconPath": "assets/icons/chart-on.png" },
+      { "pagePath": "pages/profile/index", "text": "我的", "iconPath": "assets/icons/user.png", "selectedIconPath": "assets/icons/user-on.png" }
+    ]
+  },
+  "cloud": true,
+  "permission": {
+    "scope.addPhoneCalendar": { "desc": "将你选择的学习提醒添加到手机日历，供每日提醒使用" }
+  },
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json",
+  "__usePrivacyCheck__": true
+}

@@ -1,0 +1,17 @@
+.nav-row { display: flex; align-items: center; padding: 8rpx 0 30rpx; }
+.nav-back { width: 100rpx; font-size: 40rpx; color: var(--ink); }
+.nav-center { flex: 1; text-align: center; }
+.log-title { width: 100%; height: 70rpx; font-size: 30rpx; color: var(--ink); border-bottom: 1rpx solid var(--line); }
+.num-input { flex: 1; font-size: 84rpx; font-weight: 700; height: 110rpx; }
+.chips { display: flex; gap: 16rpx; margin-top: 26rpx; }
+.chip {
+  flex: 1; text-align: center; font-size: 24rpx; color: var(--ink-2);
+  background: var(--chip); border: 3rpx solid transparent;
+  border-radius: 14rpx; padding: 16rpx 0;
+  box-sizing: border-box;
+}
+.chip.on { border-color: var(--ink-3); background: var(--chip-on); color: var(--ink); font-weight: 600; }
+.long-text-box { height:280rpx; background:var(--card); border-radius:24rpx; box-sizing:border-box; }
+.long-text-input, .saved-text { display:block; width:100%; min-height:280rpx; box-sizing:border-box; padding:28rpx 32rpx; font-size:28rpx; line-height:1.7; color:var(--ink); white-space:pre-wrap; word-break:break-all; }
+.text-count { text-align:right; font-size:22rpx; margin-top:10rpx; }
+.delete-button { margin-top:20rpx; color:#C76B62; }

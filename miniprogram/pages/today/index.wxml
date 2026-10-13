@@ -1,0 +1,107 @@
+<view class="page {{theme === 'dark' ? 'td' : ''}}" style="padding-top: {{statusBarH}}px">
+  <!-- 品牌顶栏 -->
+  <view class="topbar">
+    <view class="wordmark"><view class="ring"></view>SEOUL STUDY CLUB</view>
+    <view class="spacer"></view>
+    <view class="topico" bindtap="goHabits">🔔</view>
+    <view class="topico" style="margin-right: 190rpx" bindtap="toggleTheme">{{theme === 'dark' ? '☀️' : '🌙'}}</view>
+  </view>
+
+  <view class="date-line">{{dateLine}}</view>
+  <view class="h-display">{{greeting}}</view>
+  <picker mode="date" value="{{exam.date || ''}}" bindchange="onExam">
+    <view class="link-more" style="padding: 0 6rpx 8rpx; text-decoration: underline; text-underline-offset: 6rpx">
+      {{examText}}
+    </view>
+  </picker>
+
+  <!-- 今日学习：左右切换当天任务 -->
+  <view wx:if="{{studyCards.length}}" class="study-carousel">
+    <swiper class="task-swiper" style="{{swiperHeight ? 'height:' + swiperHeight + 'px' : ''}}"
+      current="{{taskIndex}}" circular="{{studyCards.length > 1}}" autoplay="{{false}}"
+      duration="250" bindchange="onTaskChange">
+      <swiper-item wx:for="{{studyCards}}" wx:key="_id">
+        <view class="card study-card">
+          <view class="card-title"><text>今日学习</text><text class="muted">建议 {{item.suggestedMinutes}} 分钟</text></view>
+          <view class="icon-tile">{{item.status === 'done' ? '✓' : item.icon}}</view>
+          <view class="task-title">{{item.title}}</view>
+          <view class="task-tip">{{item.tip}}</view>
+          <view class="task-meta">{{item.meta}}<text wx:if="{{item.status === 'done'}}" class="tag tag-brand task-done-tag">已完成</text></view>
+          <view wx:if="{{item.status !== 'done'}}" class="btn" style="margin-top:28rpx" data-id="{{item._id}}" bindtap="startFocus">▷ 开始今日学习</view>
+          <view wx:else class="btn" style="margin-top:28rpx" data-id="{{item._id}}" bindtap="goTaskRecords">查看任务记录</view>
+          <view class="btn btn-ghost" style="margin-top:18rpx" data-id="{{item._id}}" bindtap="quickLog">✎ 记一笔</view>
+        </view>
+      </swiper-item>
+    </swiper>
+    <view wx:if="{{studyCards.length > 1}}" class="swiper-guide">
+      <text>‹ 左右滑动切换任务 ›</text><text>{{taskIndex + 1}} / {{studyCards.length}}</text>
+    </view>
+    <view wx:if="{{taskDone}}" class="muted all-done-tip">今天的计划都完成了 · {{doneCount}}/{{total}}</view>
+  </view>
+
+  <view class="card" wx:else>
+    <view class="card-title"><text>今日学习</text><text class="muted">{{emptyLabel}}</text></view>
+    <view class="empty">
+      <view class="empty-t">今天没有安排任务</view>
+      <view class="empty-d">可以在「我的」创建或调整计划，学过的话随时记一笔。</view>
+    </view>
+    <view class="btn btn-ghost" bindtap="quickLog">✎ 记一笔</view>
+  </view>
+
+  <view wx:if="{{tasks.length}}">
+    <view class="sec-head">
+      <text class="sec-title">今日任务 · {{doneCount}}/{{total}}</text>
+      <text class="link-more" bindtap="goToday">查看当日记录</text>
+    </view>
+    <view class="card">
+      <view wx:for="{{tasks}}" wx:key="_id" class="task-cell" data-id="{{item._id}}" bindtap="openTask">
+        <view class="task-icon">{{item.status === 'done' ? '✓' : item.icon}}</view>
+        <view class="cell-main">
+          <view class="cell-title">{{item.title}}</view>
+          <view class="cell-desc">建议 {{item.suggestedMinutes}} 分钟</view>
+        </view>
+        <text class="{{item.status === 'done' ? 'tag tag-brand' : 'muted'}}">{{item.statusText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日习惯 -->
+  <view class="sec-head">
+    <text class="sec-title">今日习惯</text>
+    <text class="link-more" bindtap="goHabits">管理提醒</text>
+  </view>
+  <view class="card">
+    <view wx:if="{{!habits.length}}" class="empty"><view class="empty-d">今天没有需要打卡的习惯</view></view>
+    <view wx:for="{{habits}}" wx:key="_id" class="habit-cell">
+      <view class="row">
+        <view class="check {{item.st === 'done' ? 'on' : ''}}">✓</view>
+        <view class="cell-main">
+          <view class="cell-title">{{item.name}}</view>
+        </view>
+        <view class="muted" wx:if="{{item.note}}">{{item.note}}</view>
+      </view>
+      <view class="tri-row" style="padding-left: 66rpx">
+        <view class="tri-chip {{item.st === 'done' ? 'on' : ''}}" data-id="{{item._id}}" bindtap="habitDone">完成</view>
+        <view class="tri-chip {{item.snoozed ? 'on' : ''}}" data-id="{{item._id}}" bindtap="habitSnooze">稍后</view>
+        <view class="tri-chip {{item.st !== 'done' && !item.snoozed ? 'on' : ''}}" data-id="{{item._id}}" bindtap="habitClear">未记录</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 本周一览 -->
+  <view class="sec-head">
+    <text class="sec-title">本周一览</text>
+    <text class="link-more" bindtap="goReview">查看复盘</text>
+  </view>
+  <view class="card week-card" bindtap="goReview">
+    <view class="wk-stat">
+      <view class="wk-num"><text class="muted wk-lab">学习天数</text></view>
+      <view class="num-lg">{{weekDays}}<text class="num-unit">/{{weekPlan}} 天</text></view>
+    </view>
+    <view class="wk-stat">
+      <view class="wk-num"><text class="muted wk-lab">专注时长</text></view>
+      <view class="num-lg">{{focusText}}</view>
+    </view>
+    <view class="arrow wk-arrow">›</view>
+  </view>
+</view>

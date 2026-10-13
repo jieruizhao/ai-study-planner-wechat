@@ -1,0 +1,17 @@
+<view class="page {{theme === 'dark' ? 'td' : ''}}" style="padding-top:{{statusBarH}}px">
+  <view class="records-nav"><view bindtap="back" class="records-back">‹</view><view class="records-heading">任务记录</view></view>
+  <view class="card">
+    <view class="records-title">{{title}}</view>
+    <view class="muted records-sub">{{date}} · {{logs.length}} 条 · 共 {{minutes}} 分钟</view>
+  </view>
+  <view wx:if="{{error}}" class="muted records-sub">{{error}}</view>
+  <view class="records-heading records-sub">实际学习</view>
+  <view wx:for="{{logs}}" wx:key="_id" class="record-swipe">
+    <view class="record-delete" data-id="{{item._id}}" catchtap="deleteRecord">删除</view>
+    <view class="card record-link {{openSwipeId === item._id ? 'swipe-open' : ''}}" data-id="{{item._id}}" bindtap="openLog" bindtouchstart="touchStart" bindtouchend="touchEnd" bindtouchcancel="touchCancel">
+      <view class="record-main"><view class="records-title">{{item.content || '学习记录'}}</view><view class="muted records-sub">{{item.durationMinutes}} 分钟 · 查看详情</view></view>
+      <view class="arrow">›</view>
+    </view>
+  </view>
+  <view wx:if="{{!logs.length}}" class="card muted">这项任务尚无关联的学习记录</view>
+</view>

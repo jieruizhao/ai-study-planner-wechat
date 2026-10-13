@@ -1,0 +1,28 @@
+<view class="page {{theme === 'dark' ? 'td' : ''}} focus-page" style="padding-top: {{statusBarH}}px">
+  <view class="nav-row">
+    <view class="nav-back" bindtap="finish">‹</view>
+    <view class="nav-center serif" style="font-size: 30rpx; font-weight: 700">专注中</view>
+    <view class="nav-end"></view>
+  </view>
+
+  <view class="stamp serif">{{stamp}}</view>
+  <view class="f-title serif">{{title}}</view>
+  <view class="f-tip">{{tip}}</view>
+
+  <view class="ring-wrap">
+    <view class="ring {{running ? '' : 'paused'}}">
+      <view class="ring-inner">
+        <view class="time serif">{{mmss}}</view>
+        <view class="muted" style="margin-top: 10rpx">目标 {{target}} 分钟</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="ctrl-wrap">
+    <view class="ctrl {{running ? '' : 'ctrl-resume'}}" bindtap="toggleRun">{{running ? '❙❙' : '▶'}}</view>
+    <view class="muted" style="margin-top: 14rpx">{{running ? '暂停' : '继续'}}</view>
+    <view class="btn btn-ghost finish-btn" bindtap="finish">结束本次专注</view>
+  </view>
+
+  <view class="foot-note" style="text-align:center; margin-top: 40rpx">● 计时仅在当前页面保持运行</view>
+</view>

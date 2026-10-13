@@ -1,0 +1,14 @@
+{
+  "name": "xiaomishu-regression",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/regression.test.cjs tests/features.test.cjs tests/reminder-delivery.test.cjs tests/excel-export.test.cjs tests/coach.test.cjs tests/study-agent.test.cjs",
+    "check": "node tests/static.cjs"
+  },
+  "dependencies": {
+    "xlsx": "0.18.5"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2"
+  }
+}

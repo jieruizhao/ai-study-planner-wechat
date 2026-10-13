@@ -1,0 +1,34 @@
+.task-title {
+  font-family: var(--serif);
+  font-size: 40rpx;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.task-tip { font-size: 26rpx; color: var(--ink-2); margin-top: 14rpx; line-height: 1.7; }
+.task-meta { font-size: 24rpx; color: var(--ink-3); margin-top: 20rpx; }
+.study-carousel { margin-top: 26rpx; margin-bottom: 26rpx; }
+.task-swiper { height: 740rpx; border-radius: 28rpx; background: var(--card); }
+.study-card { margin: 0; box-sizing: border-box; width: 100%; box-shadow: none; }
+.study-card .task-title, .study-card .task-meta { word-break: break-all; }
+.task-done-tag { display: inline-block; margin-left: 16rpx; }
+.swiper-guide { display: flex; justify-content: space-between; padding: 18rpx 6rpx 0; color: var(--ink-3); font-size: 24rpx; }
+.all-done-tip { padding: 16rpx 6rpx 0; text-align: center; }
+
+.sec-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14rpx 6rpx 20rpx;
+}
+.sec-title { font-size: 32rpx; font-weight: 700; }
+
+.habit-cell { padding: 24rpx 0; border-bottom: 2rpx solid var(--line-soft); }
+.habit-cell:last-child { border-bottom: none; }
+
+.week-card { display: flex; align-items: center; }
+.wk-stat { flex: 1; }
+.wk-lab { display: block; margin-bottom: 10rpx; }
+.wk-arrow { margin-left: 20rpx; }
+
+.task-cell { display: flex; align-items: center; padding: 24rpx 0; border-bottom: 2rpx solid var(--line-soft); }
+.task-cell:last-child { border-bottom: none; }
+.task-icon { width: 56rpx; font-size: 30rpx; color: var(--brand); flex-shrink: 0; }
+.task-cell .cell-main { margin-right: 18rpx; }

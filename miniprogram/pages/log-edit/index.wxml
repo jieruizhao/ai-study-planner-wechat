@@ -1,0 +1,62 @@
+<view class="page {{theme === 'dark' ? 'td' : ''}}" style="padding-top: {{statusBarH}}px">
+  <view class="nav-row">
+    <view class="nav-back" bindtap="back">‹</view>
+    <view class="nav-center">
+      <view class="muted" style="font-size: 22rpx; letter-spacing: 3rpx">ACTUAL LOG</view>
+      <view class="serif" style="font-size: 40rpx; font-weight: 700; margin-top: 4rpx">{{readOnly ? '学习记录详情' : '记录这次学习'}}</view>
+    </view>
+    <view class="nav-back" style="visibility: hidden">‹</view>
+  </view>
+
+  <!-- 关联任务 -->
+  <view class="card" wx:if="{{task}}" style="display:flex; align-items:center">
+    <view class="icon-tile" style="margin: 0; width: 80rpx; height: 80rpx; font-size: 38rpx">{{task.icon || '📚'}}</view>
+    <view class="cell-main" style="margin-left: 22rpx">
+      <input class="log-title serif" value="{{content}}" bindinput="onContent" maxlength="200" placeholder="学习内容 / 任务名称" />
+      <view class="cell-desc">{{dateText}}</view>
+    </view>
+  </view>
+  <view class="card" wx:else style="display:flex; align-items:center">
+    <view class="icon-tile" style="margin: 0; width: 80rpx; height: 80rpx; font-size: 38rpx">📚</view>
+    <view class="cell-main" style="margin-left: 22rpx">
+      <input class="log-title serif" value="{{content}}" disabled="{{readOnly}}" bindinput="onContent" maxlength="200" placeholder="自由记录 · 填写学习内容" />
+      <view class="cell-desc">{{dateText}}</view>
+    </view>
+  </view>
+
+  <!-- 时长 -->
+  <view class="field-label" style="padding: 10rpx 6rpx">实际学习时长</view>
+  <view class="input-line">
+    <input class="num-input serif" type="number" value="{{minutes}}" disabled="{{readOnly}}" bindinput="onMinutes" />
+    <text class="num-unit">分钟</text>
+  </view>
+  <view wx:if="{{fromFocus}}" class="muted" style="padding:16rpx 6rpx">实际计时 {{actualTimeText}} · 保存时按分钟四舍五入，不足 1 分钟按 1 分钟记录</view>
+  <view wx:if="{{!readOnly}}" class="chips">
+    <view wx:for="{{chips}}" wx:key="*this"
+      class="chip {{minutes === item ? 'on' : ''}}"
+      data-m="{{item}}" bindtap="pickChip">{{item}} 分钟</view>
+  </view>
+
+  <!-- 卡住 -->
+  <view class="field-label" style="padding: 30rpx 6rpx 14rpx">哪里卡住了？ <text class="muted">选填</text></view>
+  <scroll-view class="long-text-box" scroll-y enhanced show-scrollbar="{{true}}">
+    <text wx:if="{{readOnly}}" class="saved-text" selectable>{{stuck || '未填写'}}</text>
+    <textarea wx:else class="long-text-input" auto-height placeholder="例如：同义替换看到了，但不确定范围词…" value="{{stuck}}" bindinput="onStuck" maxlength="10000"></textarea>
+  </scroll-view>
+  <view class="text-count muted">{{stuck.length}} / 10000</view>
+
+  <!-- 下一步 -->
+  <view class="field-label" style="padding: 30rpx 6rpx 14rpx">下一步想做什么? <text class="muted">选填</text></view>
+  <scroll-view class="long-text-box" scroll-y enhanced show-scrollbar="{{true}}">
+    <text wx:if="{{readOnly}}" class="saved-text" selectable>{{next || '未填写'}}</text>
+    <textarea wx:else class="long-text-input" auto-height placeholder="给明天的自己留一句具体提示" value="{{next}}" bindinput="onNext" maxlength="10000"></textarea>
+  </scroll-view>
+  <view class="text-count muted">{{next.length}} / 10000</view>
+
+  <view wx:if="{{isFuture}}" class="muted" style="text-align:center; margin-top:40rpx">未来日期不能提前记录，请完成学习后再来。</view>
+  <view wx:elif="{{!readOnly && !missing}}" class="btn" style="margin-top: 40rpx" bindtap="save">{{saving ? '保存中…' : existingLog ? '保存修改' : '保存学习记录'}}</view>
+  <view wx:if="{{existingLog && readOnly && !missing}}" class="btn" style="margin-top:40rpx" bindtap="editRecord">编辑</view>
+  <view wx:if="{{existingLog && !missing}}" class="btn btn-ghost delete-button" bindtap="deleteRecord">删除记录</view>
+  <view wx:if="{{missing}}" class="muted">记录已删除或不存在，请返回刷新列表。</view>
+  <view wx:if="{{fromFocus && !saving}}" class="btn btn-ghost" style="margin-top:20rpx" bindtap="back">取消，返回专注</view>
+</view>

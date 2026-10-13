@@ -1,0 +1,55 @@
+<view class="page {{theme === 'dark' ? 'td' : ''}}" style="padding-top: {{statusBarH}}px">
+  <view class="nav-row">
+    <view class="nav-back" bindtap="back">‹</view>
+    <view class="nav-center">
+      <view class="muted" style="font-size: 22rpx; letter-spacing: 3rpx">GENTLE ROUTINE</view>
+      <view class="serif" style="font-size: 40rpx; font-weight: 700; margin-top: 4rpx">提醒与习惯</view>
+    </view>
+    <view class="nav-back" bindtap="add">＋</view>
+  </view>
+
+  <view class="hint-bar">
+    <view class="bt">🔔 提醒需要你的明确授权</view>
+    <view>手机日历负责每日提醒；微信每次订阅可发送一次，发送后需再次订阅。</view>
+  </view>
+
+  <view class="sec-head">
+    <text class="sec-title">我的提醒</text>
+    <view class="head-actions">
+      <button class="head-action head-action-add" bindtap="add" disabled="{{clearing}}" hover-class="head-action-pressed"><text class="action-plus">＋</text><text>新增提醒</text></button>
+      <button class="head-action head-action-clear" bindtap="clearInvalid" disabled="{{clearing || !invalidCount}}" loading="{{clearing}}" hover-class="head-action-pressed"><text>{{clearing ? '正在清理' : '清理失效'}}</text><text wx:if="{{invalidCount && !clearing}}" class="action-count">{{invalidCount > 99 ? '99+' : invalidCount}}</text></button>
+    </view>
+  </view>
+
+  <view wx:if="{{!habits.length}}" class="card empty">
+    <view class="empty-t">还没有提醒</view>
+    <view class="empty-d">新增一条日常提醒，帮你把节奏稳定下来。</view>
+  </view>
+
+  <view wx:for="{{habits}}" wx:key="_id" class="card {{item.invalid ? 'off' : ''}}">
+   <view class="rem-card" data-id="{{item._id}}" bindtap="edit">
+    <view class="rem-left serif">{{item.time || '未设置时间'}}</view>
+    <view class="cell-main" style="margin: 0 20rpx">
+      <view class="cell-title">{{item.name}}</view>
+      <view class="cell-desc">{{item.freq}}</view>
+      <view wx:if="{{item.invalid}}" class="cell-desc">{{item.expired ? '单次提醒已过期' : '提醒已停用'}}</view>
+      <view style="margin-top: 10rpx">
+        <text class="tag tag-brand" wx:if="{{item.enabled}}">应用内</text>
+        <text class="tag" style="margin-left: 10rpx">{{item.wechat ? '微信一次性渠道已开启' : '微信渠道未开启'}}</text>
+      </view>
+    </view>
+    <switch checked="{{item.enabled && !item.expired}}" disabled="{{item.expired}}" catchchange="toggleEnabled" data-id="{{item._id}}" color="#55654B" />
+   </view>
+   <view wx:if="{{!item.invalid}}" class="rem-actions">
+     <view class="btn btn-ghost" data-id="{{item._id}}" bindtap="addCalendar">{{item.calendarAdded ? '再次添加手机日历' : item.date ? '添加手机日历当日提醒' : '添加手机日历每日提醒'}}</view>
+     <view class="btn btn-ghost" data-id="{{item._id}}" bindtap="requestWechat">订阅下次提醒</view>
+   </view>
+  </view>
+
+  <view class="card sub-card">
+    <view class="muted" style="letter-spacing: 3rpx; font-size: 20rpx">WECHAT SUBSCRIBE</view>
+    <view class="sub-t serif">每天提醒，交给手机日历</view>
+    <view class="muted" style="margin-top: 8rpx; line-height: 1.7">日历提醒每天重复，请开启手机日历通知。添加后修改、停用或删除，请在手机日历操作。</view>
+    <view class="muted" style="margin-top:12rpx; line-height:1.7">微信订阅额度由同一模板下的提醒共用，授权一次只可发送一条，可能用于最先到期的已开启提醒；点击“订阅下次提醒”不会开启永久推送。</view>
+  </view>
+</view>

@@ -1,0 +1,38 @@
+.focus-page { display: flex; flex-direction: column; }
+.nav-row { display: flex; align-items: center; padding: 8rpx 0 10rpx; }
+.nav-back { width: 120rpx; font-size: 40rpx; color: var(--ink); }
+.nav-center { flex: 1; text-align: center; }
+.nav-end { width: 120rpx; text-align: right; font-size: 27rpx; color: var(--ink-2); }
+
+.stamp {
+  width: 110rpx; height: 110rpx; border-radius: 50%;
+  border: 2rpx solid var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20rpx; letter-spacing: 3rpx;
+  margin: 30rpx auto 26rpx;
+  transform: rotate(-8deg);
+  color: var(--ink);
+}
+.f-title { font-size: 52rpx; font-weight: 700; text-align: center; }
+.f-tip { font-size: 26rpx; color: var(--ink-2); text-align: center; margin-top: 16rpx; }
+
+.ring-wrap { display: flex; justify-content: center; margin-top: 56rpx; }
+.ring {
+  width: 460rpx; height: 460rpx; border-radius: 50%;
+  border: 2rpx solid var(--line);
+  background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+}
+.ring.paused { opacity: 0.7; }
+.ring-inner { text-align: center; }
+.time { font-size: 96rpx; font-weight: 700; letter-spacing: 4rpx; }
+
+.ctrl-wrap { display: flex; flex-direction: column; align-items: center; margin-top: 56rpx; }
+.ctrl {
+  width: 108rpx; height: 108rpx; border-radius: 50%;
+  background: var(--brand); color: var(--brand-on);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36rpx;
+}
+.ctrl-resume { background: var(--chip-on); color: var(--ink); }
+.finish-btn { margin-top: 30rpx; min-width: 240rpx; text-align: center; }

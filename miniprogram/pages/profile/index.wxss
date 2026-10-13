@@ -1,0 +1,55 @@
+.me-card { display: flex; align-items: center; }
+.avatar {
+  width: 88rpx; height: 88rpx; border-radius: 50%;
+  background: var(--brand-tint); color: var(--brand);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40rpx; font-weight: 700;
+}
+.sec-head { padding: 14rpx 6rpx 20rpx; }
+.sec-title { font-size: 32rpx; font-weight: 700; }
+
+.row-line { display: flex; align-items: center; padding: 24rpx 0; border-bottom: 2rpx solid var(--line-soft); }
+.rl-main { flex: 1; }
+.rl-t { font-size: 29rpx; font-weight: 600; }
+.rl-d { font-size: 22rpx; color: var(--ink-3); margin-top: 6rpx; }
+.rl-v { font-size: 27rpx; font-weight: 600; }
+.replan { margin-top: 26rpx; }
+
+.row-ico { font-size: 32rpx; width: 40rpx; text-align: center; }
+
+.tpl-row { display: flex; align-items: center; gap: 12rpx; margin-bottom: 16rpx; }
+.tpl-s { width: 120rpx; background: var(--chip); border-radius: 12rpx; padding: 16rpx; font-size: 26rpx; }
+.tpl-c { flex: 1; background: var(--chip); border-radius: 12rpx; padding: 16rpx; font-size: 26rpx; }
+.tpl-m { width: 90rpx; background: var(--chip); border-radius: 12rpx; padding: 16rpx; font-size: 26rpx; text-align: center; }
+.tpl-x { color: var(--ink-3); font-size: 30rpx; padding: 0 8rpx; }
+
+.pv-list { max-height: 44vh; }
+.pv-row { display: flex; align-items: center; gap: 14rpx; padding: 18rpx 0; border-bottom: 2rpx solid var(--line-soft); }
+.pv-s { width: 90rpx; font-weight: 700; font-size: 26rpx; }
+.pv-c { flex: 1; font-size: 24rpx; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 导入预览 */
+.import-row { border-bottom: none; margin-top: 6rpx; }
+.import-row .rl-t { color: var(--brand); }
+.imp-stats { display: flex; justify-content: space-around; padding: 10rpx 0 6rpx; }
+.imp-stat { text-align: center; }
+.imp-num { font-size: 44rpx; font-weight: 700; color: var(--brand); }
+.imp-lab { font-size: 22rpx; color: var(--ink-3); margin-top: 4rpx; }
+.imp-range { text-align: center; font-size: 24rpx; color: var(--ink-2); padding: 8rpx 0 16rpx; }
+.imp-list { max-height: 40vh; }
+.imp-row { display: flex; align-items: center; gap: 12rpx; padding: 16rpx 0; border-bottom: 2rpx solid var(--line-soft); }
+.imp-date { width: 150rpx; font-size: 22rpx; color: var(--ink-3); }
+.imp-sub { width: 90rpx; font-size: 24rpx; font-weight: 700; }
+.imp-con { flex: 1; font-size: 24rpx; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.imp-min { font-size: 22rpx; color: var(--ink-3); }
+.account-image { flex-shrink:0; }
+.account-sheet { max-height:80vh; overflow-y:auto; }
+.account-note { line-height:1.7; margin-bottom:24rpx; }
+.account-avatar-button { display:flex; align-items:center; gap:24rpx; margin:24rpx 0; padding:12rpx; color:var(--ink); background:var(--card); font-size:28rpx; }
+.account-avatar-button::after { border:0; }
+.account-avatar-preview { width:100rpx; height:100rpx; border-radius:50%; }
+.account-name-input { height:80rpx; padding:0 20rpx; color:var(--ink); background:var(--chip); border-radius:16rpx; }
+.account-buttons { gap:20rpx; margin-top:28rpx; }
+.account-buttons .btn { flex:1; }
+.account-error { color:var(--danger); font-size:25rpx; margin-top:16rpx; word-break:break-all; }
+.account-logout { margin-top:24rpx; color:var(--danger); }

@@ -1,0 +1,207 @@
+<view class="page {{theme === 'dark' ? 'td' : ''}}" style="padding-top: {{statusBarH}}px">
+  <view class="eyebrow">SEOUL STUDY CLUB</view>
+  <view class="h-page">我的计划</view>
+
+  <!-- 学习者 -->
+  <view class="card me-card" bindtap="openAccount">
+    <image wx:if="{{avatarUrl}}" class="avatar account-image" src="{{avatarUrl}}" mode="aspectFill" />
+    <view wx:else class="avatar serif">S</view>
+    <view class="cell-main" style="margin-left: 24rpx">
+      <view class="cell-title">{{nickname}}</view>
+      <view class="cell-desc">{{accountAuthorized ? '已登录 · 点击设置头像和昵称' : '点击微信登录 / 设置个人资料'}}</view>
+    </view>
+    <view class="arrow">›</view>
+  </view>
+
+  <!-- 学习计划 -->
+  <view class="sec-head"><text class="sec-title">学习计划</text></view>
+  <view class="card">
+    <view class="row-line">
+      <view class="rl-main"><view class="rl-t">考试日期</view><view class="rl-d">{{examDate ? "已设置" : "尚未设置"}}</view></view>
+      <picker mode="date" value="{{examDate}}" bindchange="onExam">
+        <view class="rl-v serif">{{examDate || '设置'}}</view>
+      </picker>
+    </view>
+    <view wx:if="{{hasPlan}}">
+      <view class="row-line">
+        <view class="rl-main"><view class="rl-t">计划开始日</view><view class="rl-d">历史记录不会被覆盖</view></view>
+        <picker mode="date" value="{{startDate}}" bindchange="onStart">
+          <view class="rl-v serif">{{startDate}}</view>
+        </picker>
+      </view>
+      <view class="row-line" bindtap="openWeek">
+        <view class="rl-main"><view class="rl-t">可学习日</view><view class="rl-d">{{weekText}}</view></view>
+        <view class="rl-v serif">{{weekDays}} 天</view>
+        <view class="arrow" style="margin-left: 12rpx">›</view>
+      </view>
+      <view class="row-line" bindtap="openTpl">
+        <view class="rl-main"><view class="rl-t">每日任务模板</view><view class="rl-d">生成到每个可学习日</view></view>
+        <view class="rl-v serif">{{tplCount}} 项</view>
+        <view class="arrow" style="margin-left: 12rpx">›</view>
+      </view>
+      <view wx:if="{{hasDraft}}" class="muted" style="padding:20rpx 0">计划修改已保存为草稿，确认排期后生效。</view>
+      <view class="btn btn-ghost replan" bindtap="previewReplan">↻ 预览重新排期</view>
+    </view>
+    <view wx:else class="plan-empty">
+      <view class="empty-d" style="text-align: center">还没有学习计划。创建后将按可学习日与任务模板自动生成每日任务，也可以直接导入 Excel 任务计划。</view>
+      <view class="btn" style="margin-top: 26rpx" bindtap="initPlan">创建我的学习计划</view>
+    </view>
+    <!-- 导入任务计划（无论是否已有计划均可导入） -->
+    <view class="row-line import-row" bindtap="importExcel">
+      <view class="rl-main"><view class="rl-t">📥 导入任务计划</view><view class="rl-d">{{importing ? "正在选择或解析文件…" : "先将 .xlsx 发到微信聊天，再点此选择"}}</view></view>
+      <view class="arrow">›</view>
+    </view>
+  </view>
+
+  <view wx:if="{{importError}}" class="muted" style="padding:16rpx 0;color:var(--danger)">{{importError}}</view>
+
+  <!-- 偏好与数据 -->
+  <view class="sec-head"><text class="sec-title">偏好与数据</text></view>
+  <view class="card">
+    <view class="switch-row">
+      <text class="row-ico">☾</text>
+      <view class="cell-main" style="margin-left: 20rpx"><view class="cell-title">夜间主题</view></view>
+      <switch checked="{{theme === 'dark'}}" bindchange="toggleTheme" color="#55654B" />
+    </view>
+    <view class="switch-row" bindtap="goHabits">
+      <text class="row-ico">🔔</text>
+      <view class="cell-main" style="margin-left: 20rpx"><view class="cell-title">提醒与习惯</view></view>
+      <view class="arrow">›</view>
+    </view>
+    <view class="switch-row" bindtap="syncNow">
+      <text class="row-ico">↻</text>
+      <view class="cell-main" style="margin-left: 20rpx">
+        <view class="cell-title">数据同步</view>
+        <view class="cell-desc" wx:if="{{pending > 0}}">{{pending}} 条改动待同步</view>
+        <view class="cell-desc" wx:else>已同步 · {{lastSyncText}}</view>
+      </view>
+      <view class="badge-dot" wx:if="{{pending > 0}}">{{pending}}</view>
+    </view>
+    <view class="switch-row" bindtap="exportData">
+      <text class="row-ico">↑</text>
+        <view class="cell-main" style="margin-left: 20rpx"><view class="cell-title">{{exporting ? '正在生成 Excel…' : '导出学习记录'}}</view><view class="cell-desc">Excel 文件 · 学习记录、任务与习惯打卡</view></view>
+      <view class="arrow">›</view>
+    </view>
+      <view wx:if="{{exportFile}}" style="padding:24rpx 0">
+        <view class="cell-title">{{exportFile.fileName}}</view>
+        <view class="muted" style="margin:16rpx 0">{{exportFile.count}} 条学习记录。打开后可通过右上角菜单保存或转发。</view>
+        <button class="btn" bindtap="downloadExport" loading="{{downloading}}" disabled="{{downloading}}">下载并打开 Excel</button>
+      </view>
+      <view wx:if="{{exportError}}" class="account-error">{{exportError}}</view>
+    <view class="switch-row" bindtap="resetPlan">
+      <text class="row-ico">⟲</text>
+      <view class="cell-main" style="margin-left: 20rpx">
+        <view class="cell-title">恢复初始状态</view>
+        <view class="cell-desc">清空计划与学习记录，保留考试日期和习惯</view>
+      </view>
+      <view class="arrow">›</view>
+    </view>
+    <view class="switch-row" bindtap="deleteAll">
+      <text class="row-ico" style="color: var(--danger)">✕</text>
+      <view class="cell-main" style="margin-left: 20rpx"><view class="cell-title" style="color: var(--danger)">一键清空全部数据</view></view>
+    </view>
+  </view>
+
+  <view class="muted" style="text-align:center; padding: 8rpx 0 30rpx">SEOUL STUDY CLUB · v2.1</view>
+
+  <!-- 可学习日弹层 -->
+  <view wx:if="{{sheet === 'week'}}" class="mask" bindtap="closeSheet"></view>
+  <view wx:if="{{sheet === 'week'}}" class="sheet" catchtap="noop">
+    <view class="sheet-title">每周可学习日</view>
+    <view class="wk-row" style="padding: 10rpx 0 30rpx">
+      <view wx:for="{{weekSel}}" wx:key="n"
+        class="wk {{item.on ? 'on' : ''}}"
+        data-n="{{item.n}}" bindtap="toggleTmpWeek">{{item.label}}</view>
+    </view>
+    <view class="btn" bindtap="saveWeek">保存</view>
+  </view>
+
+  <!-- 任务模板弹层 -->
+  <view wx:if="{{sheet === 'tpl'}}" class="mask" bindtap="closeSheet"></view>
+  <view wx:if="{{sheet === 'tpl'}}" class="sheet" catchtap="noop">
+    <view class="sheet-title">每日任务模板</view>
+    <view wx:for="{{tpl}}" wx:key="index" class="tpl-row">
+      <input class="tpl-s" value="{{item.subject}}" placeholder="科目" data-i="{{index}}" bindinput="tplSub" />
+      <input class="tpl-c" value="{{item.content}}" placeholder="内容" data-i="{{index}}" bindinput="tplCon" />
+      <input class="tpl-m" type="number" value="{{item.minutes}}" data-i="{{index}}" bindinput="tplMin" />
+      <text class="muted">分</text>
+      <text class="tpl-x" data-i="{{index}}" bindtap="delTpl">✕</text>
+    </view>
+    <view class="btn btn-ghost" style="margin: 10rpx 0 24rpx" bindtap="addTpl">＋ 添加任务</view>
+    <view class="muted" style="padding:12rpx 0">保存后立即更新今天及未来待办，保留历史与已完成任务。休息日不会生成任务。</view>
+    <view wx:if="{{templateError}}" class="muted" style="color:var(--danger)">{{templateError}}</view>
+    <view class="btn" bindtap="saveTpl">{{saving ? "正在更新任务…" : "保存并更新任务"}}</view>
+  </view>
+
+  <!-- 导入预览弹层 -->
+  <view wx:if="{{sheet === 'import'}}" class="mask" bindtap="cancelImport"></view>
+  <view wx:if="{{sheet === 'import'}}" class="sheet" catchtap="noop">
+    <view class="sheet-title">导入预览</view>
+    <view class="imp-stats" wx:if="{{importPreview}}">
+      <view class="imp-stat"><view class="imp-num serif">{{importPreview.imported.days}}</view><view class="imp-lab">学习日</view></view>
+      <view class="imp-stat"><view class="imp-num serif">{{importPreview.imported.tasks}}</view><view class="imp-lab">任务数</view></view>
+      <view class="imp-stat"><view class="imp-num serif">{{importPreview.imported.totalMinutes}}</view><view class="imp-lab">总分钟</view></view>
+    </view>
+    <view class="imp-range" wx:if="{{importPreview}}">
+      {{importPreview.imported.firstDate}} 至 {{importPreview.imported.lastDate}} · 每周{{importPreview.imported.weekdaysText}}
+    </view>
+    <scroll-view scroll-y class="imp-list" wx:if="{{importPreview}}">
+      <view wx:for="{{importPreview.rows}}" wx:key="index" wx:if="{{index < 12}}" class="imp-row">
+        <text class="imp-date">{{item.date}}</text>
+        <text class="imp-sub">{{item.subject}}</text>
+        <text class="imp-con">{{item.content}}</text>
+        <text class="imp-min">{{item.minutes}}分</text>
+      </view>
+      <view wx:if="{{importPreview.rows.length > 12}}" class="muted" style="text-align:center;padding:10rpx 0">
+        …其余 {{importPreview.rows.length - 12}} 条确认后全部导入
+      </view>
+    </scroll-view>
+    <view class="row" style="gap: 20rpx; margin-top: 24rpx">
+      <view class="btn btn-ghost" style="flex: 1" bindtap="cancelImport">取消</view>
+      <view class="btn" style="flex: 2" bindtap="confirmImport">确认导入</view>
+    </view>
+  </view>
+
+  <!-- 重排预览弹层 -->
+  <view wx:if="{{previewShow}}" class="mask" bindtap="cancelPreview"></view>
+  <view wx:if="{{previewShow}}" class="sheet" catchtap="noop">
+    <view class="sheet-title">重新排期预览</view>
+    <view class="muted" style="text-align:center; margin-bottom: 20rpx">
+      新增 {{preview.added || 0}} 项 · 移除 {{preview.removed || 0}} 项 · 移动 {{preview.moves.length}} 项；保留 {{preview.keepCount}} 项历史/已完成任务
+    </view>
+    <scroll-view scroll-y class="pv-list">
+      <view wx:if="{{!preview.moves.length}}" class="empty"><view class="empty-d">没有需要移动的任务</view></view>
+      <view wx:for="{{preview.moves}}" wx:key="index" class="pv-row">
+        <text class="pv-s">{{item.subject}}</text>
+        <text class="pv-c">{{item.content}}</text>
+        <text class="muted">{{item.from}} → <text style="color: var(--brand); font-weight: 700">{{item.to}}</text></text>
+      </view>
+    </scroll-view>
+    <view class="row" style="gap: 20rpx; margin-top: 24rpx">
+      <view class="btn btn-ghost" style="flex: 1" bindtap="cancelPreview">取消</view>
+      <view class="btn" style="flex: 2" bindtap="confirmPreview">确认重新排期</view>
+    </view>
+  </view>
+  <view wx:if="{{accountShow}}" class="mask" bindtap="closeAccount"></view>
+  <view wx:if="{{accountShow}}" class="sheet account-sheet">
+    <view class="sheet-title">微信账号与个人资料</view>
+    <view class="muted account-note">点击登录后，使用当前微信账号关联学习数据。头像和昵称由你自行选择，不获取手机号。</view>
+    <button wx:if="{{!accountAuthorized}}" class="btn" bindtap="loginAccount" disabled="{{accountBusy}}" loading="{{accountBusy}}">微信授权登录</button>
+    <view wx:else class="tag tag-brand">微信账号已登录</view>
+    <button class="account-avatar-button" open-type="chooseAvatar" bindchooseavatar="chooseAvatar" binderror="avatarError" disabled="{{accountBusy}}">
+      <image wx:if="{{accountAvatar}}" class="account-avatar-preview" src="{{accountAvatar}}" mode="aspectFill" />
+      <view wx:else class="account-avatar-preview avatar serif">S</view>
+      <text>选择微信头像</text>
+    </button>
+    <view class="muted" bindtap="chooseAvatarPhoto" style="padding:12rpx 0">无法选择微信头像？从相册选择</view>
+    <view class="muted" style="font-size:22rpx">选择后请点击“保存资料”，完成头像上传。</view>
+    <view class="field-label">昵称</view>
+    <input class="account-name-input" type="nickname" value="{{accountNickname}}" bindinput="accountName" bindblur="accountName" maxlength="30" disabled="{{accountBusy}}" placeholder="点击填写微信昵称，也可自行输入" />
+    <view wx:if="{{accountError}}" class="account-error">{{accountError}}</view>
+    <view class="row account-buttons">
+      <button class="btn btn-ghost" bindtap="closeAccount" disabled="{{accountBusy}}">取消</button>
+      <button class="btn" bindtap="saveAccount" disabled="{{accountBusy || !accountAuthorized}}" loading="{{accountBusy}}">保存资料</button>
+    </view>
+    <button wx:if="{{accountAuthorized}}" class="btn btn-ghost account-logout" bindtap="logoutAccount" disabled="{{accountBusy}}">退出账号</button>
+  </view>
+</view>

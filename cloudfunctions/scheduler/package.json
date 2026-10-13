@@ -1,0 +1,9 @@
+{
+  "name": "scheduler",
+  "version": "1.0.0",
+  "description": "提醒调度任务：定时扫描提醒规则并发送订阅消息",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

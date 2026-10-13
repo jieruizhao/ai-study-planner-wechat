@@ -1,0 +1,52 @@
+<view class="page {{theme === 'dark' ? 'td' : ''}}" style="padding-top: {{statusBarH}}px">
+  <view class="nav-row">
+    <view class="nav-back" bindtap="back">‹</view>
+    <view class="nav-center">
+      <view class="muted" style="font-size: 22rpx; letter-spacing: 3rpx">REMINDER</view>
+      <view class="serif" style="font-size: 40rpx; font-weight: 700; margin-top: 4rpx">{{isEdit ? '编辑提醒' : '新建提醒'}}</view>
+    </view>
+    <view class="nav-back" style="visibility: hidden">‹</view>
+  </view>
+
+  <view class="card">
+    <view class="field-label" style="padding: 0 0 14rpx">提醒名称</view>
+    <view class="input-box">
+      <input class="field-input" placeholder="例如：复习单词" value="{{name}}" bindinput="onName" maxlength="20" />
+    </view>
+
+    <view class="field-label" style="padding: 30rpx 0 14rpx">提醒时间 <text class="muted">可暂不设置</text></view>
+    <picker mode="time" value="{{time}}" bindchange="onTime">
+      <view class="input-box"><view class="field-input" style="{{time ? '' : 'color: var(--ink-3)'}}">{{time || '选择时间'}}</view></view>
+    </picker>
+
+    <view wx:if="{{date}}" class="muted" style="padding-top:24rpx">仅 {{date}} 当天提醒，不重复到其他日期</view>
+    <view wx:if="{{!date}}" class="field-label" style="padding: 30rpx 0 20rpx">重复日期</view>
+    <view wx:if="{{!date}}" class="wk-row">
+      <view wx:for="{{weeks}}" wx:key="n"
+        class="wk {{item.on ? 'on' : ''}}"
+        data-n="{{item.n}}" bindtap="toggleWk">{{item.label}}</view>
+    </view>
+  </view>
+
+  <view class="field-label" style="padding: 10rpx 6rpx 20rpx">提醒渠道</view>
+  <view class="card" style="padding: 8rpx 30rpx">
+    <view class="chan-row">
+      <view class="cell-main">
+        <view class="cell-title">应用内</view>
+        <view class="cell-desc">打开应用时可见</view>
+      </view>
+      <view class="chan-check on">✓</view>
+    </view>
+    <view class="chan-row" bindtap="toggleWx">
+      <view class="cell-main">
+        <view class="cell-title">微信一次性提醒</view>
+        <view class="cell-desc">保存后返回列表点击“订阅下次提醒”，每次授权可发送一条</view>
+      </view>
+      <view class="chan-check {{wxReminder ? 'on' : ''}}">{{wxReminder ? '✓' : ''}}</view>
+    </view>
+  </view>
+
+  <view class="btn" style="margin-top: 36rpx" bindtap="save">保存提醒</view>
+  <view class="muted" style="margin-top:20rpx; line-height:1.7">保存后可在提醒列表添加手机日历每日提醒。已添加的日历日程需在手机日历中修改或删除。</view>
+  <view wx:if="{{isEdit}}" class="del-link" bindtap="remove">删除该提醒</view>
+</view>
